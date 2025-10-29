@@ -5,7 +5,7 @@
 
 This project inherits most of it's code from [@xkevios](https://github.com/xkevio) [ParCIO typst templates](https://github.com/xkevio/parcio-typst). Thanks a lot for the work done.
 
-`ams-slides` ports the presentation (beamer) slides.\
+`ams-slides` ports the presentation (beamer) slides.
 
 TODO
 `ams-report` is somewhat outdated (will be updated soon).

@@ -1,0 +1,4 @@
+justfile
+scripts
+thumbnails
+*.pdf

@@ -16,7 +16,8 @@ A simple <a href="https://typst.app/universe/package/polylux/">polylux</a> slide
 To use this template, simply import it as shown below and define a `title-slide` with the following possible options:
 
 ```typ
-#import "@preview/parcio-slides:0.1.2": *
+#import "@preview/ams-slides:0.0.1": * // Once public to typst-packages
+#import "@local/ams-slides:0.0.1": * // If installed locally
 
 #show: parcio-theme.with(
   aspect-ratio: "16-9", // "16-9" and "4-3" are the only possible options.
@@ -92,10 +93,8 @@ just install
 
 ## Fonts and OvGU Corporate Design
 
-This template requires these two fonts to be installed on your system:
+This template requires the font to be installed on your system:
 
-* Libertinus Sans (https://github.com/alerque/libertinus)
-* Inconsolata (https://github.com/googlefonts/Inconsolata)
+* Latin Modern font family (https://www.gust.org.pl/projects/e-foundry/latin-modern)
 
-We bundle the default "Faculty of Computer Science" head banner and use it as the `logo`. You can find yours at: https://www.cd.ovgu.de/Fakult%C3%A4ten.html.
-
+We bundle the default "Faculty of Computer Science" head banner and use it as the `logo`, as well as AMS / KMD `header-` and `backdrop-logos`. You can find yours at: https://www.cd.ovgu.de/Fakult%C3%A4ten.html.

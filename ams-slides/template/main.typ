@@ -20,8 +20,14 @@
 
 
 #slide(title: "Template", new-section: "Introduction")[
+  = Heading 1
+  test
+
+  == Subheading (Level: 2)
+  
   - This presentation template is available at
     https://github.com/xkevio/parcio-typst and consists of Sections 1 to 4.
+  - More points
 ]
 
 #slide(

@@ -2,26 +2,17 @@
 #import "@preview/subpar:0.2.2"
 
 #let m-dark-teal = rgb("#23373b")
-#let m-light-brown = rgb("#eb811b")
-#let m-lighter-brown = rgb("#d6c6b7")
-#let m-extra-light-gray = white.darken(2%)
-
-#let ovgu-red = rgb("#D13F58")
-#let ovgu-purple = rgb("#7A003F")
-#let ovgu-blue = rgb("#0068B4")
 #let ovgu-darkgray = rgb("#606060")
-#let ovgu-lightgray = rgb("#C0C0C0").lighten(50%)
 #let ovgu-orange = rgb("#F39100")
+#let ovgu-inf-blue = rgb(0, 104, 180)
 
 #let m-pages = counter("m-page")
 #let m-footer = state("m-footer", [])
 #let m-metadata = state("m-metadata", (:))
 
-#let ams-logo =  image("AMS.pdf", height: 4cm)
-#let kmd-logo =  image("KMD.pdf", height: 4cm)
-#let header-logo = image("AMSKMDhead.pdf", height: 116%)
-
-#let ovgu-inf-blue = rgb(0, 104, 180)
+// #let ams-logo = image("AMS.pdf", height: 4cm)
+// #let kmd-logo = image("KMD.pdf", height: 4cm)
+#let header-logo = image("AMSKMDhead.pdf", width: 100%)
 
 /* ----- General theming and show rules ----- */
 
@@ -29,14 +20,15 @@
   set page(
     width: 160mm,
     height: 90mm,
-    margin: 0em,
+    margin: 0mm,
   )
 
   set text(font: "Latin Modern Sans", fill: m-dark-teal, text-size)
   set list(indent: 1em)
   set enum(indent: 1em)
   
-  show raw: set text(font: "New Computer Modern Sans", 1.1em)
+  show raw: set text(font: "DejaVu Sans Mono")
+  show link: it => { set text(font: "DejaVu Sans Mono", .8em) if type(it.dest) == str; it }
 
   // Add line numbers to code block.
   show raw.where(block: true): r => {
@@ -62,14 +54,12 @@
     *#c.supplement #c.counter.display(c.numbering)#c.separator*#c.body
   ]
 
-  // Make URLs use monospaced font.
-  show link: it => { set text(font: "New Computer Modern Sans", 0.9em) if type(it.dest) == str; it }
-
-  // set footnote.entry(
-  //   indent: 2.5em,
-  //   separator: line(start: (2em, 0em), end: (40%, 0em), stroke: 0.5pt),
-  // )
-  // v(-1cm)
+  show footnote.entry: it => it + v(5pt)
+  set footnote.entry(
+    indent: 1cm,
+    separator: line(start: (1cm, 0em), end: (40%, 0em), stroke: 0.5pt),
+  )
+  
   body
 }
 
@@ -121,13 +111,13 @@
     ]
   }
 
-  // let insertable = if short-title != none { short-title } else { title }
-  // m-footer.update(
-  //   grid(columns: (1fr, auto), align: (left, center), 
-  //     if type(author) == array { h(1cm) + insertable + "  |  " + author.map(x => x.name).join(", ") } else { h(1cm) + insertable + "  |  " + author.name }, 
-  //     context [#m-pages.get().first() / #m-pages.final().first()] + h(1cm)
-  //   ),
-  // )
+  let footer-title = if short-title != none { short-title } else { title }
+  m-footer.update(
+    grid(columns: (1fr, 1fr), align: (left, right), 
+      footer-title + " | " + author.name, 
+      context [#m-pages.get().first()/#m-pages.final().first()]
+    ),
+  )
   
   polylux-slide(content)
 }
@@ -147,51 +137,45 @@
   skip: false,
   body,
 ) = {
-  // Define header: [Subsection] --- [Section], incl. progress bar.
   let header = {
-    set align(top)
-    
+    block(header-logo, width: 100%)
+
     if title != none {
       if new-section != none {
         toolbox.register-section(new-section)
       }
-
+      
+      // TODO: change to default page counter
       if not skip {
         m-pages.step()
       }
-      block(header-logo, width: 100%)
-
-      v(-2.8cm)
-      block(inset: 1em, width: 100%, height: 100%)[
-        #set align(left)
-        #set text(fill: ovgu-blue, 1.4em)
-        *#title*#h(1fr)
-
+      
+      place(bottom + left, dx: 4mm, dy: -5mm)[
+        #set text(fill: ovgu-inf-blue, 12pt)
+        *#title*
       ]
-    } else {
-      strong("Missing Headline")
     }
-
-    //block(height: 1pt, width: 100%, spacing: 0pt, m-progress-bar)
   }
 
-  // Define footer: [author] - [title] - [page / total]
   let footer = if show-footer {
-    v(-0.4cm)
-    block(fill: ovgu-blue, height: 1.3em, align(horizon, text(0.8em, fill: white, context m-footer.get()))) 
+    block(fill: ovgu-inf-blue, width: 100%, height: 100%, inset: (x: .5cm))[
+      #set text(white, 4pt)
+      #set align(horizon)
+      *#context m-footer.get()*
+    ] 
   }
 
   set page(
     header: header,
     footer: footer,
     header-ascent: 0em,
-    margin: (top: 2.5em, bottom: 1em),
+    footer-descent: 0em,
+    margin: (top: 1.1cm, bottom: .3cm),
     fill: white,
   )
 
   let content = {
-    show: align.with(horizon)
-    show: pad.with(2em)
+    show: pad.with(x: 1cm, y: .5cm)
     body
   }
 

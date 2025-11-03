@@ -17,25 +17,26 @@
 #let m-footer = state("m-footer", [])
 #let m-metadata = state("m-metadata", (:))
 
-#let ams-logo =  image("AMS.svg", height: 4cm)
-#let kmd-logo =  image("KMD.svg", height: 4cm)
-#let header-logo = image("AMSKMDhead.svg", height: 116%)
+#let ams-logo =  image("AMS.pdf", height: 4cm)
+#let kmd-logo =  image("KMD.pdf", height: 4cm)
+#let header-logo = image("AMSKMDhead.pdf", height: 116%)
+
+#let ovgu-inf-blue = rgb(0, 104, 180)
 
 /* ----- General theming and show rules ----- */
 
-#let ams-theme(aspect-ratio: "16-9", text-size: 20pt, body) = {
+#let ams-theme(aspect-ratio: "16-9", text-size: 10pt, body) = {
   set page(
-    paper: "presentation-" + aspect-ratio,
+    width: 160mm,
+    height: 90mm,
     margin: 0em,
-    header: none,
-    footer: none,
   )
 
-  set text(font: "Latin Modern Roman", fill: m-dark-teal, text-size)
+  set text(font: "New Computer Modern Sans", fill: m-dark-teal, text-size)
   set list(indent: 1em)
   set enum(indent: 1em)
   
-  show raw: set text(font: "Latin Modern Roman", 1.1em)
+  show raw: set text(font: "New Computer Modern Sans", 1.1em)
 
   // Add line numbers to code block.
   show raw.where(block: true): r => {
@@ -62,13 +63,13 @@
   ]
 
   // Make URLs use monospaced font.
-  show link: it => { set text(font: "Latin Modern Roman", 0.9em) if type(it.dest) == str; it }
+  show link: it => { set text(font: "New Computer Modern Sans", 0.9em) if type(it.dest) == str; it }
 
-  set footnote.entry(
-    indent: 2.5em,
-    separator: line(start: (2em, 0em), end: (40%, 0em), stroke: 0.5pt),
-  )
-  v(-1cm)
+  // set footnote.entry(
+  //   indent: 2.5em,
+  //   separator: line(start: (2em, 0em), end: (40%, 0em), stroke: 0.5pt),
+  // )
+  // v(-1cm)
   body
 }
 
@@ -93,77 +94,39 @@
   backdrop-logo: none,
 ) = {
   m-metadata.update(("title": title, "authors": author))
-
+  
   let content = {
-    set align(left)
-
-    block(width: auto, height: auto, breakable: false, {
-      // Upper part: Title, subtitle and logo.
-      v(-0cm)
-      grid(
-        fill: ovgu-blue,
-        column-gutter: -0.09cm,
-        columns: (1fr, auto),
-        rows: (7cm),
-        grid(
-          inset: 2.5em,
-          columns: auto,
-          rows: (1fr, auto),
-          row-gutter: 2cm,
-          v(-1cm) + logo,
-          text(size: 1.3em, v(0.0em) + strong(title) + v(-0.25em) + text(0.85em, subtitle), fill: white),
-        ),
-        backdrop-logo,
+    // Blue rectangle header with OvGU head and logo.
+    rect(fill: ovgu-inf-blue, width: 100%, height: 90mm-55mm, inset: (left: 14mm, rest: 0mm))[
+      #place(top + right, backdrop-logo)
+      #place(top + left, dy: 3mm,  logo)
+    ]
+    // Title, subtitle and author data.
+    place(bottom + left, dx: 14mm, dy: -60mm)[
+      #set text(white)
+      #text(14pt, strong(title))
+      #v(1em, weak: true)
+      #text(10pt, strong(subtitle))
+    ]
+    place(top + left, dx: 14mm, dy: 90mm-50mm)[
+      #stack(dir: ttb, spacing: 5mm, strong(author.name), extra, date)
+    ]
+    // AMS + KMD logo.
+    place(bottom + right, dx: -10mm, dy: -7mm)[
+      #stack(dir: ltr, spacing: 5mm,
+        image("KMD.pdf", height: 20mm),
+        image("AMS.pdf", height: 20mm)
       )
-    })
-    v(-1.5cm)
-    block(width: auto, height: 50%, inset: 2.5em, {
-
-      // Bottom part: Author, date, institution, etc.
-      set text(size: 1em)
-      
-
-      let author-information = if type(author) == array {
-        let names = author.map(x => x.name)
-        let mails = author.map(x => x.mail)
-
-        let name-and-mail = names.zip(mails).map(
-          ((n, m)) => n + "\n" + link("mailto:" + m)
-        )
-
-        grid(columns: author.len(), column-gutter: 1em, ..name-and-mail)
-      } else {
-        text(size: 0.9cm, strong(author.name)) + "\n" //+ link("mailto:" + author.mail)
-      }
-
-      stack(
-        spacing: 1em, 
-        author-information, 
-        v(0.5cm) + extra, 
-        v(0.5cm) + date)
-    })
-
-    set align(right)
-    v(-5cm)
-    block(inset: 1.5em, {
-      grid(
-        grid(
-          columns: (auto, auto),
-          column-gutter: 0.8cm,
-          kmd-logo,
-          ams-logo
-        )
-      )
-    })
+    ]
   }
 
-  let insertable = if short-title != none { short-title } else { title }
-  m-footer.update(
-    grid(columns: (1fr, auto), align: (left, center), 
-      if type(author) == array { h(1cm) + insertable + "  |  " + author.map(x => x.name).join(", ") } else { h(1cm) + insertable + "  |  " + author.name }, 
-      context [#m-pages.get().first() / #m-pages.final().first()] + h(1cm)
-    ),
-  )
+  // let insertable = if short-title != none { short-title } else { title }
+  // m-footer.update(
+  //   grid(columns: (1fr, auto), align: (left, center), 
+  //     if type(author) == array { h(1cm) + insertable + "  |  " + author.map(x => x.name).join(", ") } else { h(1cm) + insertable + "  |  " + author.name }, 
+  //     context [#m-pages.get().first() / #m-pages.final().first()] + h(1cm)
+  //   ),
+  // )
   
   polylux-slide(content)
 }

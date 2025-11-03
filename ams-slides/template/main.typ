@@ -1,17 +1,17 @@
-#import "@local/ams-slides:0.0.1": *
+#import "../src/ams.typ": *
 #show: ams-theme
 
 #title-slide(
   title: "Full Title of the Presentation",
   subtitle: "Subtitle if necessary",
-  logo: image("Signet_INF_1_inv.svg", width: auto, height: 2cm),
+  logo: image("Signet_INF_1_inv.pdf", height: 11mm),
   extra: [
-    #set text(0.825em)
+    // #set text(0.825em)
     Title of Course\
     Faculty of Computer Science\
     Otto von Guericke University Magdeburg
   ],
-  backdrop-logo: image("otto.svg", width: auto, height: 7cm),
+  backdrop-logo: image("otto.pdf", height: 100%),
 )
 
 // Show presentation title in outline and highlight upcoming section.

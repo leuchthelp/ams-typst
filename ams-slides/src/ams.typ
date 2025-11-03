@@ -32,7 +32,7 @@
     margin: 0em,
   )
 
-  set text(font: "New Computer Modern Sans", fill: m-dark-teal, text-size)
+  set text(font: "Latin Modern Sans", fill: m-dark-teal, text-size)
   set list(indent: 1em)
   set enum(indent: 1em)
   
@@ -109,7 +109,8 @@
       #text(10pt, strong(subtitle))
     ]
     place(top + left, dx: 14mm, dy: 90mm-50mm)[
-      #stack(dir: ttb, spacing: 5mm, strong(author.name), extra, date)
+      #let wide-lmmodern = text.with(font: "Latin Modern Sans 8")
+      #stack(dir: ttb, spacing: 5mm, strong(author.name), wide-lmmodern(extra, 7pt), wide-lmmodern(date, 8pt))
     ]
     // AMS + KMD logo.
     place(bottom + right, dx: -10mm, dy: -7mm)[

@@ -6,7 +6,6 @@
   subtitle: "Subtitle if necessary",
   logo: image("Signet_INF_1_inv.pdf", height: 11mm),
   extra: [
-    // #set text(0.825em)
     Title of Course\
     Faculty of Computer Science\
     Otto von Guericke University Magdeburg

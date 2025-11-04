@@ -6,20 +6,26 @@
 #let ovgu-orange = rgb("#F39100")
 #let ovgu-inf-blue = rgb(0, 104, 180)
 
-#let m-pages = counter("m-page")
 #let m-footer = state("m-footer", [])
 #let m-metadata = state("m-metadata", (:))
 
-// #let ams-logo = image("AMS.pdf", height: 4cm)
-// #let kmd-logo = image("KMD.pdf", height: 4cm)
+#let ams-logo = image("AMS.pdf", height: 20mm)
+#let kmd-logo = image("KMD.pdf", height: 20mm)
+#let university-logo = image("Signet_INF_1_inv.pdf", height: 11mm)
+#let backdrop-logo = image("otto.pdf")
 #let header-logo = image("AMSKMDhead.pdf", width: 100%)
 
 /* ----- General theming and show rules ----- */
 
-#let ams-theme(aspect-ratio: "16-9", text-size: 10pt, body) = {
+#let ams-theme(
+  width: 160mm,
+  height: 90mm,
+  text-size: 10pt,
+  body
+) = {
   set page(
-    width: 160mm,
-    height: 90mm,
+    width: width,
+    height: height,
     margin: 0mm,
   )
 
@@ -74,14 +80,15 @@
 // - extra: (Optional) info below the date, like your faculty.
 // - backdrop-logo: (Optional) institution / faculty mascot.
 #let title-slide(
-  title: [],
+  title: none,
   author: (name: "Your name", mail: "example@ovgu.de"), 
   subtitle: none, 
   short-title: none,
-  logo: none,
   date: datetime.today().display("[day].[month].[year]"), 
   extra: none,
-  backdrop-logo: none,
+  university-logo: university-logo,
+  backdrop-logo: backdrop-logo,
+  institute-logos: (kmd-logo, ams-logo),
 ) = {
   m-metadata.update(("title": title, "authors": author))
   
@@ -89,13 +96,16 @@
     // Blue rectangle header with OvGU head and logo.
     rect(fill: ovgu-inf-blue, width: 100%, height: 90mm-55mm, inset: (left: 14mm, rest: 0mm))[
       #place(top + right, backdrop-logo)
-      #place(top + left, dy: 3mm,  logo)
+      #place(top + left, dy: 3mm,  university-logo)
     ]
     // Title, subtitle and author data.
     place(bottom + left, dx: 14mm, dy: -60mm)[
       #set text(white)
-      #text(14pt, strong(title))
-      #v(1em, weak: true)
+
+      #show std.title: set text(14pt, weight: "bold")
+      #show std.title: set block(below: 0.7em)
+      
+      #std.title(title)
       #text(10pt, strong(subtitle))
     ]
     place(top + left, dx: 14mm, dy: 90mm-50mm)[
@@ -105,8 +115,7 @@
     // AMS + KMD logo.
     place(bottom + right, dx: -10mm, dy: -7mm)[
       #stack(dir: ltr, spacing: 5mm,
-        image("KMD.pdf", height: 20mm),
-        image("AMS.pdf", height: 20mm)
+        ..institute-logos
       )
     ]
   }
@@ -115,25 +124,38 @@
   m-footer.update(
     grid(columns: (1fr, 1fr), align: (left, right), 
       footer-title + " | " + author.name, 
-      context [#m-pages.get().first()/#m-pages.final().first()]
+      toolbox.slide-number + "/" + toolbox.last-slide-number
     ),
   )
   
   polylux-slide(content)
 }
 
-// Basic slide function.
-//
-// - title: (Optional) title of the slide, will be shown on the left in the header.
-// - new-section: (Optional) marks a new topic, adds it to the outline & on the right in the header.
-// - show-current-section: (default: true) if the current section should be displayed.
-// - show-footer: (default: true) if the footer should be displayed.
-// - skip: (default: false) whether to skip the page counter for this slide
+/// The basic slide function to create a new slide.
+///
+/// ```example
+/// #slide(title: "Introduction")[My slide content!]
+/// ``` 
+/// 
+/// -> content
 #let slide(
+  /// The slide title, displayed in the upper left of the header.
+  /// -> content | none
   title: none,
+  /// A new section title, displayed in the outline slide.
+  /// -> content | none
   new-section: none,
-  show-current-section: true,
+  /// The header logo / bar, default is KMD+AMD.
+  /// -> content
+  header-logo: header-logo,
+  /// The current slide alignment (default: top + left).
+  /// -> alignment
+  alignment: top + left,
+  /// Whether to show the footer bar (default: true).
+  /// -> bool
   show-footer: true,
+  /// Whether to skip the page counter for this slide (default: false).
+  /// -> bool
   skip: false,
   body,
 ) = {
@@ -145,9 +167,8 @@
         toolbox.register-section(new-section)
       }
       
-      // TODO: change to default page counter
-      if not skip {
-        m-pages.step()
+      if skip {
+        counter("logical-slide").update(n => n - 1)
       }
       
       place(bottom + left, dx: 4mm, dy: -5mm)[
@@ -168,13 +189,14 @@
   set page(
     header: header,
     footer: footer,
-    header-ascent: 0em,
-    footer-descent: 0em,
+    header-ascent: 0mm,
+    footer-descent: 0mm,
     margin: (top: 1.1cm, bottom: .3cm),
     fill: white,
   )
 
   let content = {
+    show: align.with(alignment)
     show: pad.with(x: 1cm, y: .5cm)
     body
   }
@@ -189,6 +211,7 @@
 // - `new-section`: The next section to highlight in the outline-slide (default: none)
 #let outline-slide(title: "Outline", show-title: false, new-section: none) = slide(
   title: title, 
+  alignment: horizon,
   show-footer: false, 
   skip: true,
   [
@@ -206,12 +229,7 @@
 )
 
 // Creates a list of all references using the given style.
-#let bib-slide(title: "References", bibliography) = slide(
-  title: title, 
-  show-footer: false, 
-  show-current-section: false, 
-  skip: true
-)[
+#let bib-slide(title: "References", bibliography) = slide(title: title)[
   #set grid(align: top)
   #set par(justify: true)
   #set text(0.9em)

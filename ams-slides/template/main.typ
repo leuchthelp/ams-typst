@@ -4,13 +4,11 @@
 #title-slide(
   title: "Full Title of the Presentation",
   subtitle: "Subtitle if necessary",
-  logo: image("Signet_INF_1_inv.pdf", height: 11mm),
   extra: [
     Title of Course\
     Faculty of Computer Science\
     Otto von Guericke University Magdeburg
   ],
-  backdrop-logo: image("otto.pdf", height: 100%),
 )
 
 // Show presentation title in outline and highlight upcoming section.
@@ -33,26 +31,27 @@
 #slide(
   title: "Figures",
 )[
-  #subpar.grid(
-    caption: "Test", 
-    columns: 2,
-    label: <fig1>,
-    figure(caption: "Left")[
-      #image(alt: "Blue OVGU logo", width: 75%, "ovgu.svg")
-    ],<fig1a>,
-    figure(caption: "Right")[
-      #image(alt: "Blue OVGU logo", width: 75%, "ovgu.svg")
-    ],<fig1b>
-  )
-  \
-  - You can refer to the subfigures (Figures @fig1a[] and
-    @fig1b[]) or the figure (@fig1).
+  // #subpar.grid(
+  //   caption: "Test", 
+  //   columns: 2,
+  //   label: <fig1>,
+  //   figure(caption: "Left")[
+  //     #image(alt: "Blue OVGU logo", width: 75%, "ovgu.svg")
+  //   ],<fig1a>,
+  //   figure(caption: "Right")[
+  //     #image(alt: "Blue OVGU logo", width: 75%, "ovgu.svg")
+  //   ],<fig1b>
+  // )
+  // \
+  // - You can refer to the subfigures (Figures @fig1a[] and
+  //   @fig1b[]) or the figure (@fig1).
 ]
 
 #slide(
   title: "References",
   new-section: "Background",
 )[
+  #show: align.with(horizon)
   - You can comfortably reference literature @DuweLMSF0B020 #footnote[This is a footnote.]
 ]
 
@@ -72,7 +71,7 @@
 #slide(
   title: "Math",
 )[
-  $ (diff T) / (diff x)(0, t) = (diff T) / (diff x)(L, t) = 0\ "where" forall t > 0 "with" L = "length". $
+  $ (partial T) / (partial x)(0, t) = (partial T) / (partial x)(L, t) = 0\ "where" forall t > 0 "with" L = "length". $
 
   \
 

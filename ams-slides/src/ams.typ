@@ -18,7 +18,7 @@
 /* ----- General theming and show rules ----- */
 
 /// A show-rule to apply general AMS theming rules.
-/// 
+///
 /// By default, this will set the slide dimensions to (160mm x 90mm)
 /// and the text size to 10pt -- this is configurable.
 ///
@@ -27,7 +27,7 @@
   width: 160mm,
   height: 90mm,
   text-size: 10pt,
-  body
+  body,
 ) = {
   set page(
     width: width,
@@ -41,10 +41,13 @@
   set figure(gap: 1em)
   set list(indent: 1em)
   set enum(indent: 1em)
-  
+
   show heading: set block(spacing: 1em)
   show raw: set text(font: "DejaVu Sans Mono")
-  show link: it => { set text(font: "DejaVu Sans Mono", .8em) if type(it.dest) == str; it }
+  show link: it => {
+    set text(font: "DejaVu Sans Mono", .8em) if type(it.dest) == str
+    it
+  }
 
   // Add line numbers to code block.
   show raw.where(block: true): r => {
@@ -56,8 +59,7 @@
         inset: 0em,
         column-gutter: 1em,
         align: (x, y) => if x == 0 { right } else { left },
-        text(fill: ovgu-darkgray, str(l.number)),
-        l.body,
+        text(fill: ovgu-darkgray, str(l.number)), l.body,
       ))
     }
 
@@ -75,20 +77,20 @@
     indent: 1cm,
     separator: line(start: (1cm, 0em), end: (40%, 0em), stroke: 0.5pt),
   )
-  
+
   body
 }
 
 /// The title slide of your presentation.
 ///
-/// ```example 
+/// ```example
 /// #title-slide(
 ///   title: "My presentation about Typst",
 ///   author: (name: "Peter Trom", mail: "example@ovgu.de"),
 ///   subtitle: "A subtitle to ascertain the importance of my topic"
 /// )
 /// ```
-/// 
+///
 /// -> content
 #let title-slide(
   /// The title of your presentation.
@@ -120,12 +122,12 @@
   institute-logos: (kmd-logo, ams-logo),
 ) = {
   m-metadata.update(("title": title, "authors": author))
-  
+
   let content = {
     // Blue rectangle header with OvGU head and logo.
-    rect(fill: ovgu-inf-blue, width: 100%, height: 90mm-55mm, inset: (left: 14mm, rest: 0mm))[
+    rect(fill: ovgu-inf-blue, width: 100%, height: 90mm - 55mm, inset: (left: 14mm, rest: 0mm))[
       #place(top + right, backdrop-logo)
-      #place(top + left, dy: 3mm,  university-logo)
+      #place(top + left, dy: 3mm, university-logo)
     ]
     // Title, subtitle and author data.
     place(bottom + left, dx: 14mm, dy: -60mm)[
@@ -133,30 +135,30 @@
 
       #show std.title: set text(14pt, weight: "bold")
       #show std.title: set block(below: 0.7em)
-      
+
       #std.title(title)
       #text(10pt, strong(subtitle))
     ]
-    place(top + left, dx: 14mm, dy: 90mm-50mm)[
+    place(top + left, dx: 14mm, dy: 90mm - 50mm)[
       #let wide-lmmodern = text.with(font: "Latin Modern Sans 8")
+      // @typstyle off
       #stack(dir: ttb, spacing: 5mm, strong(author.name), wide-lmmodern(extra, 7pt), wide-lmmodern(date, 8pt))
     ]
     // AMS + KMD logo.
     place(bottom + right, dx: -10mm, dy: -7mm)[
-      #stack(dir: ltr, spacing: 5mm,
-        ..institute-logos
-      )
+      #stack(dir: ltr, spacing: 5mm, ..institute-logos)
     ]
   }
 
   let footer-title = if short-title != none { short-title } else { title }
   m-footer.update(
-    grid(columns: (1fr, 1fr), align: (left, right), 
-      footer-title + " | " + author.name, 
-      toolbox.slide-number + "/" + toolbox.last-slide-number
+    grid(
+      columns: (1fr, 1fr),
+      align: (left, right),
+      footer-title + " | " + author.name, toolbox.slide-number + "/" + toolbox.last-slide-number,
     ),
   )
-  
+
   polylux-slide(content)
 }
 
@@ -164,8 +166,8 @@
 ///
 /// ```example
 /// #slide(title: "Introduction")[My slide content!]
-/// ``` 
-/// 
+/// ```
+///
 /// -> content
 #let slide(
   /// The slide title, displayed in the upper left of the header.
@@ -195,11 +197,11 @@
       if new-section != none {
         toolbox.register-section(new-section)
       }
-      
+
       if skip {
         counter("logical-slide").update(n => n - 1)
       }
-      
+
       place(bottom + left, dx: 4mm, dy: -5mm)[
         #set text(fill: ovgu-inf-blue, 12pt)
         *#title*
@@ -212,7 +214,7 @@
       #set text(white, 4pt)
       #set align(horizon)
       *#context m-footer.get()*
-    ] 
+    ]
   }
 
   set page(
@@ -236,7 +238,7 @@
     } else {
       body
     }
-    
+
     adjusted-body
   }
 
@@ -257,24 +259,24 @@
   show-title: false,
   /// The next section to highlight in the outline-slide (default: none)
   /// -> string | none
-  new-section: none
+  new-section: none,
 ) = slide(
-    title: title, 
-    alignment: horizon,
-    show-footer: false, 
-    skip: true
-  )[
-    #set list(marker: none, spacing: 2em)
-    #set text(gray) if new-section != none
+  title: title,
+  alignment: horizon,
+  show-footer: false,
+  skip: true,
+)[
+  #set list(marker: none, spacing: 2em)
+  #set text(gray) if new-section != none
 
-    #if show-title [
-      - #text(m-dark-teal, context m-metadata.get().title)
-    ]
-
-    - #toolbox.all-sections((s, c) => list(
-        ..s.map(x => if x.body.text == new-section { text(m-dark-teal, x) } else { x })
-      ))
+  #if show-title [
+    - #text(m-dark-teal, context m-metadata.get().title)
   ]
+
+  - #toolbox.all-sections((s, c) => list(
+      ..s.map(x => if x.body.text == new-section { text(m-dark-teal, x) } else { x }),
+    ))
+]
 )
 
 /// Creates a list of all references using the given style.

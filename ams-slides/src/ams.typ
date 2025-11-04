@@ -9,11 +9,11 @@
 #let m-footer = state("m-footer", [])
 #let m-metadata = state("m-metadata", (:))
 
-#let ams-logo = image("AMS.pdf", height: 20mm)
-#let kmd-logo = image("KMD.pdf", height: 20mm)
-#let university-logo = image("Signet_INF_1_inv.pdf", height: 11mm)
-#let backdrop-logo = image("otto.pdf")
-#let header-logo = image("AMSKMDhead.pdf", width: 100%)
+#let ams-logo = image("logos/AMS.pdf", height: 20mm)
+#let kmd-logo = image("logos/KMD.pdf", height: 20mm)
+#let university-logo = image("logos/Signet_INF_1_inv.pdf", height: 11mm)
+#let backdrop-logo = image("logos/otto.pdf")
+#let header-logo = image("logos/AMSKMDhead.pdf", width: 100%)
 
 /* ----- General theming and show rules ----- */
 

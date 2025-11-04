@@ -1,19 +1,18 @@
 [package]
 name = "ams-slides"
-version = "0.0.1"
+version = "0.1.0"
 entrypoint = "src/ams.typ"
 authors = ["Lucas Philipp <@leuchthelp>", "Kevin Kulot <@xkevio>", "Luke <@AdmiralLuke>"]
 license = "0BSD"
-description = "A simple polylux slide template based on the AMS working group at OvGU Magdeburg. Adopted from the ParCIO-typst templates"
+description = "A simple polylux slide template based on the AMS working group at OvGU Magdeburg."
 repository = "https://github.com/leuchthelp/ams-typst/"
 categories = ["presentation"]
 keywords = ["presentation", "slides", "polylux", "university", "OvGU", "Magdeburg", "Otto von Guericke Universität"]
-compiler = "0.13.0"
+compiler = "0.14.0"
 exclude = [
   "justfile",
   "scripts",
   "thumbnails",
-  "*.pdf",
 ]
 
 [template]

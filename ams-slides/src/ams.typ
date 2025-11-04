@@ -17,6 +17,12 @@
 
 /* ----- General theming and show rules ----- */
 
+/// A show-rule to apply general AMS theming rules.
+/// 
+/// By default, this will set the slide dimensions to (160mm x 90mm)
+/// and the text size to 10pt -- this is configurable.
+///
+/// -> content
 #let ams-theme(
   width: 160mm,
   height: 90mm,
@@ -30,9 +36,13 @@
   )
 
   set text(font: "Latin Modern Sans", fill: m-dark-teal, text-size)
+  set math.equation(numbering: "(1)")
+
+  set figure(gap: 1em)
   set list(indent: 1em)
   set enum(indent: 1em)
   
+  show heading: set block(spacing: 1em)
   show raw: set text(font: "DejaVu Sans Mono")
   show link: it => { set text(font: "DejaVu Sans Mono", .8em) if type(it.dest) == str; it }
 
@@ -69,25 +79,44 @@
   body
 }
 
-// Declare your title slide! OvGU logo to the right.
-//
-// - title: Your presentation title.
-// - author: Consists of author.name and author.mail.
-// - subtitle: (Optional) subtitle for more info.
-// - short-title: (Optional) short title for the footer.
-// - logo: (Optional) institution / faculty logo
-// - date: (Optional) date of the presentation.
-// - extra: (Optional) info below the date, like your faculty.
-// - backdrop-logo: (Optional) institution / faculty mascot.
+/// The title slide of your presentation.
+///
+/// ```example 
+/// #title-slide(
+///   title: "My presentation about Typst",
+///   author: (name: "Peter Trom", mail: "example@ovgu.de"),
+///   subtitle: "A subtitle to ascertain the importance of my topic"
+/// )
+/// ```
+/// 
+/// -> content
 #let title-slide(
+  /// The title of your presentation.
+  /// -> content | none
   title: none,
-  author: (name: "Your name", mail: "example@ovgu.de"), 
-  subtitle: none, 
+  /// The author data (name and mail).
+  /// -> dictionary
+  author: (name: "Your name", mail: "example@ovgu.de"),
+  /// An optional subtitle.
+  /// -> content | none
+  subtitle: none,
+  /// An optional shorter title for the footer.
+  /// -> content | none
   short-title: none,
-  date: datetime.today().display("[day].[month].[year]"), 
+  /// The current date and formatting (default: `datetime.today()`).
+  /// -> datetime
+  date: datetime.today().display("[day].[month].[year]"),
+  /// Extra data such as course title, institute or university.
+  /// -> content | none
   extra: none,
+  /// The university logo in the top left of the title slide.
+  /// -> content
   university-logo: university-logo,
+  /// The backdrop logo in the top right of the title slide.
+  /// -> content
   backdrop-logo: backdrop-logo,
+  /// The insititute logos as an array in the bottom right of the title slide.
+  /// -> array
   institute-logos: (kmd-logo, ams-logo),
 ) = {
   m-metadata.update(("title": title, "authors": author))
@@ -198,7 +227,17 @@
   let content = {
     show: align.with(alignment)
     show: pad.with(x: 1cm, y: .5cm)
-    body
+
+    // Slightly adjust content if horizontal alignment is selected
+    // to account for the different margin sizes of the page.
+    let adjusted-body = context if alignment == horizon {
+      let move-diff = (page.margin.top - page.margin.bottom) / 2
+      move(dy: -move-diff, body)
+    } else {
+      body
+    }
+    
+    adjusted-body
   }
 
   polylux-slide(content)
@@ -206,15 +245,25 @@
 
 /* ----- Helper / Utility functions for tables, subfigures, shortcuts & todos. ----- */
 
-// Creates a clickable outline with a customizable title for each `new-section` entry.
-// - `show-title`: Whether to show the presentation title as a heading (default: false)
-// - `new-section`: The next section to highlight in the outline-slide (default: none)
-#let outline-slide(title: "Outline", show-title: false, new-section: none) = slide(
-  title: title, 
-  alignment: horizon,
-  show-footer: false, 
-  skip: true,
-  [
+/// Creates a clickable outline with a customizable title for each `new-section` entry.
+///
+/// -> content
+#let outline-slide(
+  /// The title of the slide in the top left.
+  /// -> string | content
+  title: "Outline",
+  /// Whether to show the presentation title as a heading (default: false)
+  /// -> bool
+  show-title: false,
+  /// The next section to highlight in the outline-slide (default: none)
+  /// -> string | none
+  new-section: none
+) = slide(
+    title: title, 
+    alignment: horizon,
+    show-footer: false, 
+    skip: true
+  )[
     #set list(marker: none, spacing: 2em)
     #set text(gray) if new-section != none
 
@@ -228,7 +277,7 @@
   ]
 )
 
-// Creates a list of all references using the given style.
+/// Creates a list of all references using the given style.
 #let bib-slide(title: "References", bibliography) = slide(title: title)[
   #set grid(align: top)
   #set par(justify: true)
@@ -236,17 +285,5 @@
   #bibliography
 ]
 
-// Custom ParCIO table as illustrated in the template.
-#let ams-table(max-rows, ..args) = table(
-  ..args,
-  row-gutter: (2.5pt, auto),
-  stroke: (x, y) => (
-    left: 0.5pt,
-    right: 0.5pt,
-    top: if y <= 1 { 0.5pt },
-    bottom: if y == 0 or y == max-rows - 1 { 0.5pt }
-  )
-)
-
-// Simple orange TODO box.
+/// Simple orange TODO box.
 #let todo = rect.with(fill: ovgu-orange, stroke: black + 0.5pt, radius: 0.25em, width: 100%)
